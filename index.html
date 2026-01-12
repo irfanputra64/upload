@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cupi-san</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ffe6ef, #ffd1e3);
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+    }
+
+    .page {
+      display: none;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .page.active {
+      display: flex;
+    }
+
+    .container {
+      text-align: center;
+      perspective: 1200px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== PAGE 1 : ENVELOPE ===== */
+    .envelope {
+      width: 300px;
+      height: 190px;
+      position: relative;
+      background: #fff0f6;
+      border: 2px solid #f3b6cc;
+      border-radius: 10px;
+      box-shadow: 0 14px 30px rgba(255,105,180,0.25);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffd6e8;
+      clip-path: polygon(0 0, 100% 0, 50% 55%);
+      z-index: 1;
+    }
+
+    .wax-seal {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ffb6d5, #e75480);
+      box-shadow: inset 0 0 0 4px rgba(255,255,255,0.3), 0 6px 15px rgba(0,0,0,0.35);
+      color: #fff;
+      font-size: 22px;
+      border: none;
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+
+    .wax-seal:hover {
+      transform: scale(1.05);
+    }
+
+    /* ===== PAGE 2 : POP UP CARD ===== */
+    .card-wrapper {
+      width: 520px;
+      max-width: 92vw;
+      transform-style: preserve-3d;
+    }
+
+    .card {
+      background: #fff5fa;
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(231,84,128,0.3);
+      padding: 40px;
+      animation: popup 0.9s ease forwards;
+      transform-origin: bottom;
+      transform: rotateX(-90deg);
+    }
+
+    @keyframes popup {
+      to {
+        transform: rotateX(0deg);
+      }
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: #c94a7c;
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+    }
+
+    .card p {
+      color: #6b2d4f;
+      font-size: 16px;
+      line-height: 1.9;
+      white-space: pre-line;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: #f3b6cc;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .close-btn:hover {
+      background: #e75480;
+      transform: scale(1.1);
+    }
+
+    .card.closing {
+      animation: closeCard 0.6s ease forwards;
+    }
+
+    @keyframes closeCard {
+      from {
+        transform: rotateX(0deg);
+        opacity: 1;
+      }
+      to {
+        transform: rotateX(-90deg);
+        opacity: 0;
+      }
+    }
+
+    /* ===== PINK PARTICLES ===== */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: radial-gradient(circle, #ffb6d5, #e75480);
+      border-radius: 50%;
+      opacity: 0.7;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(0) scale(1);
+        opacity: 0.8;
+      }
+      to {
+        transform: translateY(-120vh) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    /* ===== MOBILE OPTIMIZATION ===== */
+    @media (max-width: 480px) {
+      .envelope {
+        width: 240px;
+        height: 150px;
+      }
+
+      .wax-seal {
+        width: 56px;
+        height: 56px;
+        font-size: 18px;
+      }
+
+      .card-wrapper {
+        width: 100%;
+      }
+
+      .card {
+        padding: 24px;
+        border-radius: 12px;
+      }
+
+      .card h3 {
+        font-size: 20px;
+      }
+
+      .card p {
+        font-size: 14px;
+        line-height: 1.8;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="particles" id="particles"></div>
+
+  <!-- PAGE 1 -->
+  <div class="page active" id="page1">
+    <div class="container">
+      <div class="envelope">
+        <div class="flap"></div>
+        <button class="wax-seal" id="openBtn">✉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="page" id="page2">
+    <div class="container">
+      <div class="card-wrapper">
+        <div class="card">
+          <button class="close-btn" id="closeBtn">✕</button>
+          <h3>Untuk Kamu cupi ⸜(｡˃ ᵕ ˂)⸝♡</h3>
+          <p id="message"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MUSIC -->
+  <audio id="bgMusic" src="https://raw.githubusercontent.com/irfanputra64/upload/7fd63e7765f0ec363dfec74330bb3fbe5613064e/ssstik.io_%40sebwery_1768212533902.mp3" preload="auto"></audio>
+
+  <script>
+    const openBtn = document.getElementById('openBtn');
+    const page1 = document.getElementById('page1');
+    const page2 = document.getElementById('page2');
+    const message = document.getElementById('message');
+    const music = document.getElementById('bgMusic');
+    const particles = document.getElementById('particles');
+    const closeBtn = document.getElementById('closeBtn');
+    const card = document.querySelector('.card');
+
+    const messageText = `Kalau lagi lemes, capek, dan kepala agak pusing, jangan dipaksain dulu ya.
+
+Kadang badan memang butuh istirahat lebih, apalagi kalau akhir-akhir ini sering begadang.
+
+Coba pelan-pelan dikurangin begadangnya biar badan nggak gampang drop.
+
+Santai sebentar, minum yang cukup, dan istirahat biar badannya pelan-pelan balik enakan.
+
+無理しないで、今日はゆっくり休んでね、cupiさん`;
+
+    openBtn.addEventListener('click', () => {
+      page1.classList.remove('active');
+      page2.classList.add('active');
+      message.textContent = messageText;
+
+      // play music softly with fade-in
+      music.volume = 0;
+      music.play().catch(() => {});
+
+      const targetVolume = 0.3;
+      const duration = 3000;
+      const steps = 30;
+      let currentStep = 0;
+
+      const fade = setInterval(() => {
+        currentStep++;
+        music.volume = Math.min(targetVolume, (targetVolume / steps) * currentStep);
+        if (currentStep >= steps) clearInterval(fade);
+      }, duration / steps);
+
+      createParticles();
+    });
+
+    closeBtn.addEventListener('click', () => {
+      card.classList.add('closing');
+
+      const fadeOut = setInterval(() => {
+        if (music.volume > 0.05) {
+          music.volume -= 0.05;
+        } else {
+          music.pause();
+          music.currentTime = 0;
+          clearInterval(fadeOut);
+        }
+      }, 100);
+
+      setTimeout(() => {
+        page2.classList.remove('active');
+        page1.classList.add('active');
+        card.classList.remove('closing');
+        particles.innerHTML = '';
+      }, 600);
+    });
+
+    function createParticles() {
+      particles.innerHTML = '';
+      const isMobile = window.innerWidth <= 480;
+      const count = isMobile ? 12 : 25;
+
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('span');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.bottom = '-10px';
+        p.style.animationDuration = (isMobile ? 5 : 4) + Math.random() * 4 + 's';
+        p.style.animationDelay = Math.random() * 2 + 's';
+        p.style.transform = `scale(${(isMobile ? 0.4 : 0.5) + Math.random()})`;
+        particles.appendChild(p);
+      }
+    }
+  </script>
+</body>
+</html>
